@@ -6,6 +6,14 @@
 
 Evaluate the UX of different ML platforms by building the same models across them. The study will focus on ease of use, feature comprehensiveness, and developer experience.
 
+## Prerequisites
+Before running `make create_environment`, ensure you have `virtualenvwrapper` installed:
+- **Linux/macOS**:  
+  ```sh
+  pip install virtualenvwrapper
+  echo "source $(which virtualenvwrapper.sh)" >> ~/.bashrc
+  source ~/.bashrc
+
 ## Project Organization
 
 ```
