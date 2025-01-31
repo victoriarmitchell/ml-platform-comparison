@@ -1,4 +1,4 @@
-dvc
+dvc[all]
 featuretools
 black
 flake8

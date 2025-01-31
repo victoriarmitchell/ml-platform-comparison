@@ -44,6 +44,11 @@ format:
 sync_data_down:
 	gsutil -m rsync -r gs://ml-platform-comparison-gcs/data/ data/
 	
+    
+## Download Raw Data from storage system
+.PHONY: sync_data_down_raw
+sync_data_down_raw:
+	dvc pull
 
 ## Upload Data to storage system
 .PHONY: sync_data_up
