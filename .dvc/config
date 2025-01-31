@@ -1,5 +1,6 @@
 [core]
     remote = storage
+    autostage = true
 ['remote "storage"']
     url = gs://ml-platform-comparison-gcs
     credentialpath = /home/jupyter/.config/gcloud/application_default_credentials.json
