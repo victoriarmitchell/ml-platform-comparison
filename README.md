@@ -8,15 +8,13 @@ Evaluate the UX of different ML platforms by building the same models across the
 
 ## Prerequisites
 Before running `make create_environment`, ensure you have `virtualenvwrapper` installed:
-**Linux/macOS**:  
+- **Linux/macOS**:  
   ```sh
   pip install virtualenvwrapper
   echo "source $(which virtualenvwrapper.sh)" >> ~/.bashrc
   source ~/.bashrc
-  ```
 
 ## Project Organization
-
 ```
 ├── LICENSE            <- Open-source license if one is chosen
 ├── Makefile           <- Makefile with convenience commands like `make data` or `make train`
@@ -65,6 +63,5 @@ Before running `make create_environment`, ensure you have `virtualenvwrapper` in
     │
     └── plots.py                <- Code to create visualizations
 ```
-
 --------
 
