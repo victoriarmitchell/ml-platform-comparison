@@ -1,6 +1,8 @@
-# Data
-data/raw/
-data/prepared/
+# Ignore all CSV files
+*.csv
+
+# BUT allow DVC metadata files
+!*.csv.dvc
 
 # Mac OS-specific storage files
 .DS_Store
