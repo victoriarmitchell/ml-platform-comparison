@@ -3,94 +3,79 @@ import pandas as pd
 import subprocess
 import typer
 from loguru import logger
-from tqdm import tqdm
 
-from ml_platform_comparison.config import PROCESSED_DATA_DIR, RAW_DATA_DIR
+from ml_platform_comparison.config import RAW_DATA_DIR, PROCESSED_DATA_DIR
 
-# initialize typer
-app = typer.Typer()
+app = typer.Typer()  # Initialize Typer CLI app
 
-@app.command()
-def dvc_pull():
-    """
-    Ensures that the latest data is pulled from DVC if it's missing.
-    """
+def run_command(command):
+    """Helper function to run shell commands safely."""
     try:
-        logger.info("Checking if raw data exists locally...")
-        if not (RAW_DATA_DIR / "train_transaction.csv").exists():
-            logger.warning("Raw data not found locally. Pulling from DVC...")
-            subprocess.run(["dvc", "pull", "data/raw/train_transaction.csv"], check=True)
-            logger.success("DVC pull complete.")
-    except subprocess.CalledProcessError:
-        logger.error("DVC pull failed. Make sure you have access to the remote storage.")
+        logger.info(f"Executing command: {command}")
+        result = subprocess.run(command, check=True, shell=True, capture_output=True, text=True)
+        logger.info(result.stdout)
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Command failed: {command}")
+        logger.error(e.stderr)
 
-@app.command()
-def load_data():
-    """
-    Loads the dataset from the raw data directory. Calls dvc_pull() if the file is missing.
-    """
-    dvc_pull()  # Ensure data is available
-    file_path = RAW_DATA_DIR / "train_transaction.csv"
+def dvc_pull():
+    """Ensures that the latest raw data is pulled from DVC if it's missing."""
+    try:
+        logger.info("Pulling latest raw data from DVC...")
+        run_command("dvc pull")
+        logger.success("DVC pull complete.")
+    except Exception as e:
+        logger.error(f"DVC pull failed: {e}")
 
-    if file_path.exists():
-        logger.info(f"Loading dataset from {file_path}")
-        df = pd.read_csv(file_path)
-        logger.success("Dataset loaded successfully!")
-        print(df.head())  # Display first few rows
-    else:
-        logger.error(f"Dataset not found at {file_path}")
-
-@app.command()
+@app.command()  # Correct way to register a Typer command
 def preprocess():
-    """
-    Preprocesses the dataset, saves the cleaned version, and tracks it with DVC.
-    """
+    """Preprocesses all files in RAW_DATA_DIR and saves them in PROCESSED_DATA_DIR with `_processed` appended to filenames."""
     dvc_pull()
-    file_path = RAW_DATA_DIR / "train_transaction.csv"
     
-    if not file_path.exists():
-        logger.error("Raw data not found. Run 'python dataset.py load-data' first.")
+    if not RAW_DATA_DIR.exists():
+        logger.error(f"RAW_DATA_DIR does not exist: {RAW_DATA_DIR}")
         return
 
-    logger.info(f"Loading dataset from {file_path}")
-    df = pd.read_csv(file_path)
+    PROCESSED_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Basic preprocessing
-    logger.info("Starting data preprocessing...")
-    
-    logger.info("Handling missing values...")
-    df.fillna(method='ffill', inplace=True)  # Forward fill missing values
+    for file in RAW_DATA_DIR.glob("*.csv"):
+        logger.info(f"Processing {file.name}...")
 
-    logger.info("Dropping duplicate rows...")
-    df.drop_duplicates(inplace=True)
+        try:
+            df = pd.read_csv(file)
 
-    logger.info("Converting categorical features...")
-    categorical_cols = df.select_dtypes(include=['object']).columns
-    for col in categorical_cols:
-        df[col] = df[col].astype('category')
+            # Basic preprocessing
+            logger.info(f"Handling missing values for {file.name}...")
+            df.fillna(method='ffill', inplace=True)
 
-    # Save processed data
-    processed_path = PROCESSED_DATA_DIR / "train_transaction_processed.csv"
-    df.to_csv(processed_path, index=False)
-    
-    logger.success(f"Preprocessing complete! Processed data saved to {processed_path}")
+            logger.info(f"Dropping duplicate rows for {file.name}...")
+            df.drop_duplicates(inplace=True)
 
-    # Track processed data with DVC
-    logger.info("Tracking processed data with DVC...")
-    #subprocess.run(f"dvc add {processed_path}")
-    subprocess.run(["dvc", "add", f"{processed_path}"], check=True)
+            logger.info(f"Converting categorical features for {file.name}...")
+            categorical_cols = df.select_dtypes(include=['object']).columns
+            for col in categorical_cols:
+                df[col] = df[col].astype('category')
 
-    # Git commit
-    logger.info("Committing DVC changes to Git...")
-    subprocess.run(["git", "add", "."], check=True)
-    #subprocess.run(["git", "add", f"{processed_path}.dvc"], check=True)
-    subprocess.run(["git", "commit", "-m", "Add processed data to DVC"], check=True)
+            # Generate processed filename with "_processed"
+            processed_filename = file.stem + "_processed.csv"
+            processed_file = PROCESSED_DATA_DIR / processed_filename
 
-    # Push to DVC remote
-    logger.info("Pushing processed data to DVC remote...")
-    subprocess.run(["dvc", "push", f"{processed_path}.dvc"], check=True)
+            # Save processed data
+            df.to_csv(processed_file, index=False)
+            logger.success(f"Processed file saved: {processed_file}")
 
-    logger.success("Processed data successfully added to DVC and pushed to remote!")
+            # Track processed data with DVC
+            run_command(f"dvc add {processed_file}")
+
+        except Exception as e:
+            logger.error(f"Error processing {file.name}: {e}")
+
+    # Commit and push all processed files
+    run_command("git add data/processed/*.dvc")
+    run_command("git commit -m 'Track all processed datasets with DVC'")
+    run_command("dvc push")
+
+    logger.success("All processed datasets are tracked and pushed to DVC!")
 
 if __name__ == "__main__":
-    app()
+    app()  # Ensures Typer recognizes commands

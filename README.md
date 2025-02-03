@@ -13,7 +13,7 @@ Before running `make create_environment`, ensure you have `virtualenvwrapper` in
   pip install virtualenvwrapper
   echo "source $(which virtualenvwrapper.sh)" >> ~/.bashrc
   source ~/.bashrc
-  
+  ```
 
 ## Project Organization
 

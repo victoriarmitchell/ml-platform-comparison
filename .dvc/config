@@ -1,0 +1,5 @@
+[core]
+    remote = gcp
+['remote "gcp"']
+    url = gs://ml-platform-comparison-gcs
+    credentialpath = /home/jupyter/.config/gcloud/application_default_credentials.json

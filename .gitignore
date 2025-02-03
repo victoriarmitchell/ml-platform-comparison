@@ -37,3 +37,5 @@ MANIFEST
 
 # ignore specific dvc files                                                                          1,1           Top
 data/raw/train_identity.csv
+data/raw/train_transaction.csv
+.ipynb_checkpoints
