@@ -1,4 +1,4 @@
-#!/home/jupyter/ml_platform_comparison/venv/bin/python3
+#!/home/jupyter/ml-platform-comparison/venv/bin/python3
 __author__ = 'jszheng'
 import optparse
 import sys

@@ -68,3 +68,23 @@ Before running `make create_environment`, ensure you have `virtualenvwrapper` in
 
 --------
 
+## Phase 0
+Goal: Assess the ease of getting started with basic ML experimentation in the platform.
+
+### Key Aspects
+
+	•	Data: Simple synthetic dataset with a small number of labeled transactions.
+	•	Compute: Notebooks instead of full pipelines.
+	•	Storage: Local storage (e.g., CSV files, in-memory Pandas).
+	•	Feature Engineering: Basic transformations in the notebook.
+	•	Libraries: Minimal dependencies (numpy, pandas, sklearn).
+
+### Usability Metrics
+
+| Metric                  | Description                                                                 | Target      |
+|-------------------------|---------------------------------------------------------------------------|------------|
+| **Time to First Model (TTFM)** | Time taken to load data, train a basic model, and get predictions | < 30 min   |
+| **Setup Friction Score** | Number of manual steps needed to install dependencies, configure the environment, and start working (lower is better) | < 5 steps  |
+| **Notebook UX Score**    | Subjective rating (1–5) on ease of code execution, visualization, debugging | ≥ 4        |
+| **Data Ingestion Ease**  | Number of steps to load data from
+ 
