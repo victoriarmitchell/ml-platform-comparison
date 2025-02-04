@@ -57,8 +57,8 @@
 | **Service**  | **Usage**  | **Estimated Cost**  |
 |-------------|---------|----------------|
 | **Vertex AI Model Registry**  | Model registration & versioning | **$0.10 per model** |
-| **SageMaker Model Registry**  | Model tracking & versioning | **$0.15 per model** |
-| **Azure ML Model Registry**  | Model tracking | **$0.12 per model** |
+| **SageMaker Model Registry**  | Model registration & versioning | **$0.15 per model** |
+| **Azure ML Model Registry**  | Model registration & versioning | **$0.12 per model** |
 | **Vertex AI Model Monitoring**  | 10K predictions (optional) | **$10 - $15** |
 
 ---
